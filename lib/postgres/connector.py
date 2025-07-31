@@ -14,7 +14,6 @@ from psycopg.rows import tuple_row, AsyncRowFactory, Row
 __version__ = "0.1.2"
 
 
-
 class DBConnector:
     def __init__(self, database: str, user: str, password: str, host: str, port: int):
         logging.info(
@@ -71,6 +70,7 @@ class DBConnector:
                 logging.exception(exc)
                 await self.connect()
             return await func(self, *args, **kwargs)
+
         return wrapper
 
     @checkConnection
