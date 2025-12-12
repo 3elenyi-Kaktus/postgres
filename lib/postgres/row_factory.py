@@ -1,8 +1,8 @@
 from typing import Any, Sequence
-from typing_extensions import Self
 
 from psycopg import AsyncClientCursor
 from psycopg.rows import RowMaker
+from typing_extensions import Self
 
 
 class Factory:

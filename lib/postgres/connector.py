@@ -1,17 +1,17 @@
 import logging
 from pathlib import Path
 from time import sleep
-from typing import Any, Optional, Callable
-from typing_extensions import Self
+from typing import Any, Callable, Iterable, Optional
 
 import psycopg
+from psycopg import AsyncClientCursor, AsyncConnection
 from psycopg.abc import Query
+from psycopg.rows import AsyncRowFactory, Row, tuple_row
 from psycopg_pool.pool_async import AsyncConnectionPool
-from psycopg import AsyncConnection, AsyncClientCursor
-from psycopg.rows import tuple_row, AsyncRowFactory, Row
+from typing_extensions import Self
 
 
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 
 
 class DBConnector:
@@ -96,7 +96,7 @@ class DBConnector:
         return result
 
     @checkConnection
-    async def copySQL(self, sql: Query, filepath: Path) -> None:
+    async def copyFromFileSQL(self, sql: Query, filepath: Path) -> None:
         try:
             with open(filepath, "rt") as file:
                 async with AsyncClientCursor(self.aconn) as cursor:
@@ -109,3 +109,14 @@ class DBConnector:
         except psycopg.Error as error:
             logging.error(f"Failed to copy file to DB")
             raise RuntimeError(f"Failed to copy file to DB") from error
+
+    @checkConnection
+    async def copyFromIterableSQL(self, sql: Query, records: Iterable) -> None:
+        try:
+            async with AsyncClientCursor(self.aconn) as cursor:
+                async with cursor.copy(sql) as copy:
+                    for record in records:
+                        await copy.write_row(record)
+        except psycopg.Error as error:
+            logging.error(f"Failed to copy iterable to DB")
+            raise RuntimeError(f"Failed to copy iterable to DB") from error
