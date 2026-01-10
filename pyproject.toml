@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "postgres"
+dependencies = [
+    "psycopg==3.2.1",
+    "psycopg_pool==3.2.4",
+    "typing_extensions==4.14.1"
+]
+dynamic = ["version"]
+
+[tool.setuptools.dynamic]
+version = {attr = "postgres.__version__"}

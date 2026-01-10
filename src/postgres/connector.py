@@ -11,9 +11,6 @@ from psycopg_pool.pool_async import AsyncConnectionPool
 from typing_extensions import Self
 
 
-__version__ = "0.1.3"
-
-
 class DBConnector:
     def __init__(self, database: str, user: str, password: str, host: str, port: int):
         logging.info(
