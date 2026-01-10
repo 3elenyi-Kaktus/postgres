@@ -14,7 +14,7 @@ from typing_extensions import Self
 class DBConnector:
     def __init__(self, database: str, user: str, password: str, host: str, port: int):
         logging.info(
-            f"Initializing DB connector (v. {__version__}) with:\n"
+            f"Initializing DB connector with:\n"
             f"Database: {database}\n"
             f"User: {user}\n"
             f"Password: {password}\n"
