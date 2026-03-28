@@ -33,8 +33,8 @@ class DBConnector:
         self.port = port
 
     @classmethod
-    async def create(cls, *args, **kwargs) -> Self:
-        connector: cls = cls(*args, **kwargs)
+    async def create(cls, *args: Any, **kwargs: Any) -> Self:
+        connector: Self = cls(*args, **kwargs)
         await connector.connect()
         return connector
 
@@ -58,8 +58,8 @@ class DBConnector:
                 sleep(3)
 
     @staticmethod
-    def checkConnection(func: Callable):
-        async def wrapper(self, *args, **kwargs):
+    def checkConnection(func: Callable) -> Callable:
+        async def wrapper(self: "DBConnector", *args: Any, **kwargs: Any) -> Any:
             try:
                 await AsyncConnectionPool.check_connection(self.aconn)
             except BaseException as exc:
@@ -74,13 +74,13 @@ class DBConnector:
     async def executeSQL(
         self,
         sql: Query,
-        request: dict[str, Any] = None,
+        request: Optional[dict[str, Any]] = None,
         row_factory: AsyncRowFactory = tuple_row,
         fetchable: bool = True,
     ) -> Optional[list[Row]]:
         async with AsyncClientCursor(self.aconn, row_factory=row_factory) as cursor:
             try:
-                await cursor.execute(query=sql, params=request)
+                await cursor.execute(sql, request)
                 if not fetchable:
                     logging.debug(f"Query completed, marked as unfetchable")
                     return None
